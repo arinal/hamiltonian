@@ -1,0 +1,100 @@
+*  HamilTruenian Path
+** Summary
+   A program to find hamiltonian path in chess board of configurable size which movement rule is dependent upon chosen piece type.
+** Getting started
+   From the directory root, fire up sbt by typing:
+   #+BEGIN_SRC bash
+   sbt clean run
+   #+END_SRC
+   When you are prompted, just pressing return will not get any value from keyboard including default value.
+   You should type number (like =7=) when the program ask some numbers or something like =K= for Knight,  when piece type is being asked.
+   Failed to give valid value will make the program to give default value instead.
+
+   A full session of this program is below:
+   #+BEGIN_SRC bash
+   -~HamilTruenian~-
+   Simple program to solve hamiltonian path of pawn movement.
+   Board below 42 (7x6) blocks will be solved instantly.
+   Board with 42 or more blocks will take minutes.
+   Board of size 100 (10x10) takes 10-20 minutes.
+   Don't mess with sizes, it's easy to end up with solution requiring thousands years of computation!
+
+   Width of the board?  (5)
+   Height of the board? (5)
+   What to put? (Knight (K), Pawn (P), Rook (R)) (Pawn)
+   Where to put the piece's x-location? (0) Where to put the piece's y-location? (0) 
+
+   Start processing..
+   [♙........................]: 0
+   [♙..............♙.........]: 1
+   [♙..............♙..♙......]: 2
+   [♙..♙.......♙...♙..♙....♙.]: 5
+   
+   ------- cut ------------
+   
+   [♙♙♙♙♙♙.♙♙♙♙♙♙♙♙♙♙♙♙♙♙.♙♙♙]: 136
+   [♙♙♙♙♙♙.♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙]: 137
+   [♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙♙]: 138
+
+   Yeay! We found a path :)
+   
+   ♙  .  .  .  . 
+   .  .  .  .  . 
+   .  .  .  .  . 
+   .  .  .  .  . 
+   .  .  .  .  . 
+   
+   ♙  .  .  .  . 
+   .  .  .  .  . 
+   .  .  .  .  . 
+   ♙  .  .  .  . 
+   .  .  .  .  . 
+   
+   ♙  .  .  .  . 
+   .  .  .  .  . 
+   .  .  .  .  . 
+   ♙  .  .  ♙  . 
+   .  .  .  .  . 
+   
+   ------ cut -----------
+   
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  .  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  .  ♙  ♙  ♙ 
+   
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  .  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   ♙  ♙  ♙  ♙  ♙ 
+   #+END_SRC
+
+** Approach
+   This program is mainly divided into 2 parts.
+*** Search engine for various algorithm (DFS, BFS, Best First Search, A*)
+    Written in Java, this is a generic engine for various search implementations.
+    We can freely choose the algorithm to use. For hamiltonian path with size more than 5x5, using BFS is not recommended.
+    It tries to enumerate all the possible combinations and will die after out of memory.
+    Even if we have infinite memory, BFS still impossible to find the path as an 8x8 sized board has combination of 2^64,
+    even nowadays CPU (speed of 300 MIPS) will still require hundred thousands of years.
+    This application use A-*, and the heuristic evaluation is by closeness between new placed piece and original location, and the number of pieces on board.
+*** Console application, implemented with Domain Driven Design and pure functional Scala style
+    The way application is divided into layers comply with hexagonal and onion layered style.
+    - =core= packages is for business logic and the bottom-most layer.
+    - =infra= packages is for all infrastructural codes. Mainly in this application, it is an adapter to the search engine
+    - =app= packages is application and UI layer.
+      
+    Some of the notable approaches are:
+    - The UI workflow is implemented using monad computation due to the nature of simple console app.
+    - As the engine is working, the progress is sent to UI layer using callback.
+    - Business logic is reasoned using algebra.
+
+    This program doesn't have any dependencies to another library, but unfortunately unit test isn't implemented yet.

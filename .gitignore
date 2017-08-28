@@ -2,3 +2,6 @@ target
 /.idea
 /.idea_modules
 /.classpath
+
+.ensime
+.ensime_cache

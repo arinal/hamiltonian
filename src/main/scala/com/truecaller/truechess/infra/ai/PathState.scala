@@ -15,6 +15,8 @@ case class PathState(parent: PathState,
   def this(service: BoardService, board: Board, location: Location, original: Location) =
     this(null, service, board, location, original)
 
+  def childStatesCount = service.nextPossibleBoard(board, pieceLocation).size
+
   override def getThis: PathState = this
   override def getChildStates: java.lang.Iterable[PathState] = {
     service

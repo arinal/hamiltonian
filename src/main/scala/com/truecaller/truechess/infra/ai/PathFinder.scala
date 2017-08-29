@@ -12,10 +12,11 @@ class PathFinder(searcher: Searcher[Board, PathState], boardService: BoardServic
   override def findPath(board: Board, startLocation: Location,
                         progress: (Long, Board) => Unit): Option[List[Board]] = {
     val start = new PathState(boardService, board, startLocation, startLocation)
-    val end = destBoard(board.width, board.height)
+    val piece = board.pieceAt(startLocation)
+    val end = destBoard(board.width, board.height, piece)
 
     def callback(iter: java.lang.Long, state: PathState): Unit = {
-      val every = if (iter <= 300) 1
+      val every = if (iter <= 50) 1
                   else if (iter <= 1000) 100
                   else if (iter <= 10000) 1000
                   else if (iter <= 100000) 10000
@@ -28,13 +29,13 @@ class PathFinder(searcher: Searcher[Board, PathState], boardService: BoardServic
     else Some(path.getPath.asScala.map(_.board).toList)
   }
 
-  private def destBoard(width: Int, height: Int) = {
+  private def destBoard(width: Int, height: Int, piece: Piece) = {
     val coords = for {
       h <- 0 to height
       w <- 0 to width
     } yield (h, w)
     val endSet = coords.foldLeft(Set[(Piece, (Int, Int))]()) {
-      case (currSet, (x, y)) => currSet + (Pawn -> (x, y))
+      case (currSet, (x, y)) => currSet + (piece -> (x, y))
     }
     boardService.board(width, height, endSet)
   }

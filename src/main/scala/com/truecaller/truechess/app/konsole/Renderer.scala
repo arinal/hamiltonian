@@ -13,7 +13,8 @@ trait Renderer {
   }
 
   def render(piece: Piece): String = piece match {
-    case Empty  => "▐▍"
+    // case Empty  => "▐▍"
+    case Empty  => "()"
     case Pawn   => "♟ "
     case Rook   => "♜ "
     case Knight => "♞ "

@@ -11,9 +11,9 @@ public class BestSearchFringe<TState extends State>
     private Evaluator<TState> evaluator;
 
     private PriorityQueue<TState> candidates = new PriorityQueue<>(1, (s1, s2) -> {
-        Double value1 = evaluator.evaluate(s2);
-        Double value2 = evaluator.evaluate(s1);
-        return value1.compareTo(value2);
+        Double value1 = evaluator.evaluate(s1);
+        Double value2 = evaluator.evaluate(s2);
+        return -value1.compareTo(value2);
     });
 
     public BestSearchFringe(Evaluator<TState> evaluator, boolean rejectDuplicate, boolean rejectCyclic) {

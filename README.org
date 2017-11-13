@@ -1,5 +1,5 @@
 #+TITLE: Hamiltonian Path
-A program to find hamiltonian path in chess board of configurable size which movement rule is piece type dependent.
+A program to find hamiltonian path in chess board a.k.a. knight's tour. The board size is configurable and chess piece movement rule depends on piece type (pawn, knight, etc).
 
 ** Getting started
    From the directory root, fire up sbt by typing:
@@ -7,7 +7,7 @@ A program to find hamiltonian path in chess board of configurable size which mov
    sbt clean run
    #+END_SRC
    You will be prompted for several inputs. Pressing enter with an empty input for default value (as you might expect) won't work.
-   A failure to give a valid value (like typing 'a' whilst a number is expected) will make the program entering the default value.
+   A failure to give a valid value (like typing 'a' whilst a number is expected) will give us the default value instead.
    A full example session of this program is below:
    #+BEGIN_SRC 
    -~Hamiltonian Chess Pathfinder~-
@@ -75,20 +75,20 @@ A program to find hamiltonian path in chess board of configurable size which mov
 
 ** Approach
    This program is mainly sub-divided into 2 parts.
-*** Search engine for various algorithm (DFS, BFS, Best First Search, A*)
-    Written in Java, is a generic engine for many search problems.
-    Because of its generic nature, we won't find any code for handling our specific problem of hamiltonian path
-    as it will be handled in the other components in Scala.
-    For hamiltonian path with size more than 5×5, using Breadth First Search is not recommended.
+*** Generic search engine for various algorithm (DFS, BFS, Best First Search, A*)
+    Written in Java, is a generic engine capable of solving various search problems.
+    Thanks for its generic nature, we won't find any code for handling our specific problem of hamiltonian path in this part,
+    as it will be handled in another part which we will see later.
+    For hamiltonian path with board size more than 5×5, using Breadth First Search is not recommended.
     It tries to enumerate all the possible combinations and will die eventually after memory shortages.
-    Board of size 8×8 has 2^64 condition that need to be visited if you're using BFS, if memory isn't not a problem,
+    Board of size 8×8 has 2^64 condition that need to be visited. Even if memory isn't not a problem,
     it will still requires several hundred thousands of years to complete, assuming our CPU has 300 MIPS.
     Try Best First Search (or specifically A-⋆) with Warnsdorf's evaluator, it will be solved in somewhat linear time.
 *** Console application, implemented with Domain Driven Design and pure functional Scala style
     The way this application is divided into layers is in compliance with hexagonal architecture and onion layered style.
     - ~core~ packages is for business logic and the bottom-most layer. We design this as much algebraic and pure as possible.
     - ~infra~ packages is for all infrastructural codes. We consider our Java generic search engine as infra, and create an adapter here.
-    - ~app~ packages is for application and UI layer. Console app usually fail-fast, the flow is input, process, then exit, or exit directly with message if an error happens. This is implemented elegantly using monad-computation.
+    - ~app~ packages is for application and UI layer. Console app usually fail-fast, e.g. the flow is input, process, then exit, or if error, exit directly with message if an error happens. This is implemented elegantly using monad-computation.
       
     Some of the notable approaches are:
     - The UI workflow is implemented using monad computation due to the nature of simple console app.
